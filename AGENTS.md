@@ -31,7 +31,7 @@ The sections below (Start Here, Patterns, Anti-Patterns, etc.) remain the canoni
 - UI components: `agora-agent-uikit` for visualizer, transcript, and mic controls
 - Server SDK: `agora-agents` for managed agent session startup
 - API routes: token generation, agent invite, chat, and stop routes live in `app/api`
-- Default agent config: Agora-managed STT, LLM, and TTS; `.env.local` contains only Agora project credentials
+- Default agent config: Agora-managed STT/TTS with Sarvam `sarvam-105b-conversations` as the LLM; `.env.local` also requires `SARVAM_API_KEY`
 
 ## Supported Modes
 
@@ -65,6 +65,7 @@ The sections below (Start Here, Patterns, Anti-Patterns, etc.) remain the canoni
 - `components/QuickstartConversationLayout.tsx`: in-call header, transcript rail, and controls dock.
 - `components/QuickstartPipelineMetrics.tsx`: per-stage latency chips from `AGENT_METRICS`.
 - `components/QuickstartTranscriptPanel.tsx`: live transcript rail.
+- `components/IncidentCommandCenter.tsx`: derived incident record for facts, hypotheses, decisions, actions, and risks.
 - `lib/agora.ts`: shared agent UID defaults.
 - `lib/conversation.ts`: transcript normalization and visualizer state mapping.
 - `env.local.example`: local environment template.

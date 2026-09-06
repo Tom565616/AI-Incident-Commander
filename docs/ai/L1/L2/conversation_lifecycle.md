@@ -44,12 +44,13 @@ Breaking this guard causes duplicate client/track/toolkit initialization pattern
 
 ## Teardown Sequence
 
-1. If `agentId` exists, call `POST /api/stop-conversation`.
-2. Stop route calls `client.stopAgent(agent_id)` and treats already-stopping states as success.
-3. Frontend logs out RTM client and clears RTM state.
-4. `showConversation` reset unmounts conversation view.
-5. `agora-rtc-react` hook ownership handles leave/unpublish/track cleanup after unmount.
-6. Toolkit cleanup path unsubscribes and destroys `AgoraVoiceAI` singleton.
+1. Conversation UI snapshots completed + in-progress transcript turns.
+2. If `agentId` exists, call `POST /api/stop-conversation`.
+3. Stop route calls `client.stopAgent(agent_id)` and treats already-stopping states as success.
+4. Frontend logs out RTM client and clears RTM state.
+5. `showConversation` reset unmounts conversation view and the closeout view calls `POST /api/incident-report`.
+6. `agora-rtc-react` hook ownership handles leave/unpublish/track cleanup after unmount.
+7. Toolkit cleanup path unsubscribes and destroys `AgoraVoiceAI` singleton.
 
 ## Failure Modes and Recovery
 

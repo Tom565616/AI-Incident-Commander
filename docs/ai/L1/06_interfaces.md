@@ -45,6 +45,19 @@ Responses:
 - `{ "success": true, "state": "already-stopping" }` for idempotent stop state
 - `{ "error": string }` on failure
 
+### `POST /api/incident-report`
+
+Body:
+
+```json
+{
+  "messages": [{ "uid": 99, "text": "...", "createdAt": 1710000000000 }],
+  "agentUID": "123456"
+}
+```
+
+`agentUID` is optional and defaults to the shared agent UID. Success response: `{ "report": IncidentReport }`. Validation failures return `400`. The route prefers Sarvam to classify the transcript and falls back to a heuristic record if the model is unavailable.
+
 ### `POST /api/chat/completions`
 
 Optional SSE proxy path (not default runtime path). Requires `NEXT_LLM_API_KEY` and `NEXT_LLM_URL` when used.
@@ -61,8 +74,9 @@ Required:
 
 - `NEXT_PUBLIC_AGORA_APP_ID`
 - `NEXT_AGORA_APP_CERTIFICATE`
+- `SARVAM_API_KEY`
 
-This is the complete base `.env.local` contract. The optional BYOK route and provider snippets use additional variables only when a developer explicitly enables them.
+`SARVAM_API_KEY` is used server-side by the invite route to configure Sarvam's OpenAI-compatible chat endpoint. It must never be sent to the browser.
 
 ## Test Coverage for Interfaces
 

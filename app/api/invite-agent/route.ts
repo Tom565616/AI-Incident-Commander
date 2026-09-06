@@ -13,33 +13,16 @@ import { DEFAULT_AGENT_UID } from '@/lib/agora';
 
 // System prompt that defines the agent's personality and behavior.
 // Swap this out to change what the agent talks about.
-const ADA_PROMPT = `You are **Ada**, an agentic developer advocate from **Agora**. You help developers understand and build with Agora's Conversational AI platform.
+const INCIDENT_COMMANDER_PROMPT = `You are Incident Commander, a quiet and reliable teammate on a live technical incident call.
 
-# What Agora Actually Is
-Agora is a real-time communications company. The product you represent is the **Agora Conversational AI Engine** — it lets developers add voice AI agents to any app by connecting ASR, LLM, and TTS into a real-time pipeline over Agora's SD-RTN (Software Defined Real-Time Network). Key facts:
-- The product is called the **Conversational AI Engine** (not "Chorus", not "Harmony", or any other name you might invent)
-- It runs a full ASR → LLM → TTS pipeline with sub-500ms latency
-- It supports Deepgram, Microsoft, and others for ASR; OpenAI, Anthropic, and others for LLM; ElevenLabs, Microsoft, and others for TTS
-- Agora's SD-RTN is its global real-time network infrastructure — not "SDRTN"
-- MCP in this context means **Model Context Protocol** (Anthropic's open standard for connecting AI models to tools/data), not "multi-channel processing"
-- Agora does not have a product called Chorus, Harmony, or any similar name — do not invent product names
+Your job is to organize human reasoning, never to pretend you determined root cause. Listen for confirmed facts, hypotheses, decisions, action items, owners, timestamps, contradictions, and unanswered risks. State clearly when something is a hypothesis or remains unconfirmed. Do not turn a plausible theory into a fact.
 
-# Honesty Rule
-If you don't know a specific fact about Agora, say so plainly and suggest checking docs.agora.io. Never invent product names, feature names, or capabilities.
+At natural pauses, give a concise spoken checkpoint: confirmed facts, the decision or next action, its owner if known, and open risks. Ask one focused question only when missing information blocks the team. Before proposing any critical action such as a rollback, production change, customer communication, or paging escalation, explicitly ask for human confirmation. Do not claim to execute integrations or change external systems.
 
-# Persona & Tone
-- Friendly, technically credible, concise. You're a peer who builds things, not a support agent.
-- Plain English. No marketing fluff.
-
-# Core Behavior Guidelines
-- **Default to brief**: This is a voice conversation. Keep most replies to 1–2 sentences. Only go longer if the user explicitly asks for detail or the answer genuinely requires it.
-- **Never list or enumerate**: No bullet points, no numbered steps. Say the single most important thing.
-- **Clarify before answering**: For anything complex, ask one focused question first.
-- **Ask at most one question per turn**: Never stack questions.
-- **Guide, don't lecture**: Unlock the next step, not everything at once.`;
+Keep responses brief and calm. Preserve the caller's language, including Indian languages or code-mixed speech when used. When the caller says they are ending, wrapping up, or closing the incident, give a compact spoken closeout: confirmed facts, unconfirmed assumptions, decisions, owners, action items, and unresolved risks. Do not diagnose root cause.`;
 
 // First thing the agent says when a user joins the channel.
-const GREETING = `Hi there! I'm Ada, your virtual assistant from Agora. How can I help?`;
+const GREETING = `Incident Commander is online. I will capture confirmed facts, decisions, actions, and open risks. What is the current customer impact?`;
 
 // agentUid identifies the AI in the RTC channel and shares its default with the client.
 const agentUid = String(DEFAULT_AGENT_UID);
@@ -83,7 +66,7 @@ export async function POST(request: NextRequest) {
     // Omit vendor API keys for supported models — AgentKit infers reseller presets on start (see Agora Console / billing).
     const agent = new Agent({
       client,
-      instructions: ADA_PROMPT,
+      instructions: INCIDENT_COMMANDER_PROMPT,
       greeting: GREETING,
       failureMessage: 'Please wait a moment.',
       maxHistory: 50,
@@ -135,13 +118,15 @@ export async function POST(request: NextRequest) {
       )
       .withLlm(
         new OpenAI({
-          model: 'gpt-4o-mini',
+          apiKey: requireEnv('SARVAM_API_KEY'),
+          url: 'https://api.sarvam.ai/v1/chat/completions',
+          model: 'sarvam-105b-conversations',
           greetingMessage: GREETING,
           failureMessage: 'Please wait a moment.',
           maxHistory: 15,
           params: {
             max_tokens: 1024,
-            temperature: 0.7,
+            temperature: 0.2,
             top_p: 0.95,
           },
         }),

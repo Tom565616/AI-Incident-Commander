@@ -13,6 +13,9 @@ import type {
 import { ErrorBoundary } from './ErrorBoundary';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { QuickstartPreCallCard } from './QuickstartPreCallCard';
+import { IncidentReportView } from './IncidentReportView';
+import { DEFAULT_AGENT_UID } from '@/lib/agora';
+import type { IncidentReport, IncidentTranscriptTurn } from '@/lib/incident-report';
 
 // Dynamically import the ConversationComponent with ssr disabled
 const ConversationComponent = dynamic(() => import('./ConversationComponent'), {
@@ -68,11 +71,20 @@ export default function LandingPage() {
   const [agoraData, setAgoraData] = useState<AgoraTokenData | null>(null);
   const [rtmClient, setRtmClient] = useState<RTMClient | null>(null);
   const [agentJoinError, setAgentJoinError] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [incidentReport, setIncidentReport] = useState<IncidentReport | null>(
+    null,
+  );
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const handleStartConversation = async () => {
     setIsLoading(true);
     setError(null);
     setAgentJoinError(false);
+    setShowReport(false);
+    setIncidentReport(null);
+    setReportError(null);
 
     try {
       // 1. Fetch RTC token + channel
@@ -176,11 +188,16 @@ export default function LandingPage() {
     [agoraData],
   );
 
-  const handleEndConversation = async () => {
+  const handleEndConversation = async (messages: IncidentTranscriptTurn[]) => {
+    setShowConversation(false);
+    setShowReport(true);
+    setIncidentReport(null);
+    setReportError(null);
+    setIsReportLoading(true);
+
     // Stop the AI agent
     if (agoraData?.agentId) {
       try {
-        // console.log('Stopping agent:', agoraData.agentId);
         const response = await fetch('/api/stop-conversation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -189,7 +206,6 @@ export default function LandingPage() {
         if (!response.ok) {
           console.error('Failed to stop agent:', await response.text());
         }
-        // else console.log('Agent stopped successfully');
       } catch (error) {
         console.error('Error stopping agent:', error);
       }
@@ -198,7 +214,39 @@ export default function LandingPage() {
     // Tear down RTM — owned here since we created it here
     rtmClient?.logout().catch((err) => console.error('RTM logout error:', err));
     setRtmClient(null);
-    setShowConversation(false);
+
+    try {
+      const response = await fetch('/api/incident-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages,
+          agentUID: String(DEFAULT_AGENT_UID),
+        }),
+      });
+      const body = (await response.json()) as {
+        report?: IncidentReport;
+        error?: string;
+      };
+      if (!response.ok || !body.report) {
+        throw new Error(body.error || 'Failed to generate incident report');
+      }
+      setIncidentReport(body.report);
+    } catch (error) {
+      console.error('Error generating incident report:', error);
+      setReportError(
+        'Could not finish the detailed closeout. A transcript-based record may still be incomplete.',
+      );
+    } finally {
+      setIsReportLoading(false);
+    }
+  };
+
+  const handleStartAnother = () => {
+    setShowReport(false);
+    setIncidentReport(null);
+    setReportError(null);
+    setAgoraData(null);
   };
 
   return (
@@ -206,19 +254,26 @@ export default function LandingPage() {
       {/* Hero shell: either shows the pre-call CTA or swaps in the live conversation experience. */}
       <div
         className={`flex min-h-0 flex-1 flex-col ${
-          showConversation
+          showConversation || showReport
             ? 'items-stretch justify-start'
             : 'items-center justify-center'
         }`}
       >
         <div
           className={`z-10 flex min-h-0 flex-1 flex-col ${
-            showConversation
+            showConversation || showReport
               ? 'h-full w-full max-w-none items-stretch gap-0 px-0 text-left'
               : 'w-full max-w-none items-center justify-center px-4 text-center'
           }`}
         >
-          {!showConversation ? (
+          {showReport ? (
+            <IncidentReportView
+              report={incidentReport}
+              isLoading={isReportLoading}
+              error={reportError}
+              onStartAnother={handleStartAnother}
+            />
+          ) : !showConversation ? (
             <QuickstartPreCallCard
               isLoading={isLoading}
               error={error}

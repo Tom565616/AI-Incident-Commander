@@ -43,6 +43,7 @@ import {
   type QuickstartAgentMetric,
 } from './QuickstartPipelineMetrics';
 import { QuickstartTranscriptPanel } from './QuickstartTranscriptPanel';
+import { IncidentCommandCenter } from './IncidentCommandCenter';
 import type { ConversationComponentProps } from '@/types/conversation';
 
 // Cap the displayed issues list to avoid overwhelming the UI during a cascade of errors.
@@ -464,9 +465,15 @@ export default function ConversationComponent({
 
   useClientEvent(client, 'token-privilege-will-expire', handleTokenWillExpire);
 
-  const handleEndConversation = useCallback(async () => {
-    onEndConversation();
-  }, [onEndConversation]);
+  const handleEndConversation = useCallback(() => {
+    const snapshot = [
+      ...messageList,
+      ...(currentInProgressMessage?.text?.trim()
+        ? [currentInProgressMessage]
+        : []),
+    ];
+    onEndConversation(snapshot);
+  }, [currentInProgressMessage, messageList, onEndConversation]);
 
   return (
     <QuickstartConversationLayout
@@ -487,6 +494,7 @@ export default function ConversationComponent({
           agentUID={agentUID}
         />
       }
+      incidentPanel={<IncidentCommandCenter messageList={messageList} agentUID={agentUID} />}
       visualizer={
         <div
           className="relative flex h-full min-h-[20rem] w-full max-w-4xl items-center justify-center"

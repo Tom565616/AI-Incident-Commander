@@ -20,6 +20,7 @@ types/               Shared TypeScript route/component contracts
 - `generate-agora-token/route.ts`: builds RTC+RTM token via `buildTokenWithRtm`.
 - `invite-agent/route.ts`: validates input/env, configures and starts agent session.
 - `stop-conversation/route.ts`: stops agent and handles idempotent already-stopping cases.
+- `incident-report/route.ts`: builds the post-call incident closeout from the captured transcript.
 - `chat/completions/route.ts`: optional OpenAI-compatible SSE proxy for custom LLM path.
 
 ## Client Ownership (`components`)
@@ -28,6 +29,8 @@ types/               Shared TypeScript route/component contracts
 - `ConversationComponent.tsx`: RTC join, mic publish, toolkit init, transcript/metrics/issues state.
 - `QuickstartConversationLayout.tsx`: in-call framing and slots.
 - `QuickstartTranscriptPanel.tsx`: live transcript panel.
+- `IncidentCommandCenter.tsx`: classifies spoken user turns into visible incident-record entries.
+- `IncidentReportView.tsx`: post-call closeout with timeline, classified record, and unresolved risks.
 - `QuickstartPipelineMetrics.tsx`: latency chips from metrics stream.
 - `ConnectionStatusPanel.tsx` + `ConversationErrorCard.tsx`: issue rendering/severity.
 
@@ -35,6 +38,7 @@ types/               Shared TypeScript route/component contracts
 
 - `agora.ts`: default constants (`DEFAULT_AGENT_UID`).
 - `conversation.ts`: transcript normalization, spacing cleanup, timestamp normalization, visualizer state mapping.
+- `incident-report.ts`: live record extraction and post-call report compilation.
 
 ## Validation and Tooling
 

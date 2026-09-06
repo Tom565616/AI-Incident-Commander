@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](https://nodejs.org/)
 
-Build a production-style voice agent in minutes with Next.js and the Agora Conversational AI Engine, including voice agent visualizer ([Agent UIKit](https://agoraio-conversational-ai.github.io/agent-uikit/)), live transcript, and real-time pipeline latency via `AGENT_METRICS` ([Agent Toolkit](https://github.com/AgoraIO-Conversational-AI/agent-client-toolkit-ts)).
+Build a voice-native AI Incident Commander with Next.js, Agora Conversational AI, and Sarvam AI. The app maintains a live transcript plus an incident record of facts, assumptions, decisions, actions, and unresolved risks without claiming root cause.
 
 ## Prerequisites
 
@@ -93,8 +93,9 @@ Defined in [`env.local.example`](env.local.example).
 | ---------------------------- | :------: | ---------------------------------------------------------------- |
 | `NEXT_PUBLIC_AGORA_APP_ID`   |    ✅    | Agora Console → Project → App ID.                                |
 | `NEXT_AGORA_APP_CERTIFICATE` |    ✅    | Agora Console → Project → App Certificate. **Server-side only.** |
+| `SARVAM_API_KEY`             |    ✅    | Sarvam API subscription key. **Server-side only.**               |
 
-The default agent configuration in [`app/api/invite-agent/route.ts`](app/api/invite-agent/route.ts) uses Agora-managed STT, LLM, and TTS, so no extra vendor API keys are required for the base quickstart.
+The incident commander uses Agora-managed STT/TTS and Sarvam's OpenAI-compatible `sarvam-105b-conversations` model. Add `SARVAM_API_KEY` to `.env.local`; never expose it in browser code.
 
 ## Commands
 

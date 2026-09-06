@@ -30,6 +30,7 @@ agora project doctor --deep
 
 - `NEXT_PUBLIC_AGORA_APP_ID`: Agora project App ID.
 - `NEXT_AGORA_APP_CERTIFICATE`: Agora App Certificate (server only).
+- `SARVAM_API_KEY`: Sarvam API subscription key for the incident commander LLM (server only).
 
 The base `.env.local` contract contains only these Agora credentials. Agent behavior defaults live in code, and optional BYOK examples are documented later in the root README.
 

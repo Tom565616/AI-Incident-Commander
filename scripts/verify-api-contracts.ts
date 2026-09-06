@@ -14,6 +14,7 @@ function getJson(response: Response) {
 
 process.env.NEXT_PUBLIC_AGORA_APP_ID = '0123456789abcdef0123456789abcdef';
 process.env.NEXT_AGORA_APP_CERTIFICATE = 'fedcba9876543210fedcba9876543210';
+process.env.SARVAM_API_KEY = 'test-sarvam-key';
 
 async function verifyGenerateAgoraTokenRoute() {
   const { GET: generateAgoraToken } =
@@ -445,6 +446,70 @@ async function verifyStopConversationSuccess() {
   }
 }
 
+async function verifyIncidentReportValidation() {
+  const { POST: generateIncidentReport } =
+    await import('../app/api/incident-report/route');
+  const request = new NextRequest('http://localhost:3000/api/incident-report', {
+    body: JSON.stringify({}),
+    method: 'POST',
+  });
+  const response = await generateIncidentReport(request);
+  const body = await getJson(response);
+
+  assert(
+    response.status === 400,
+    'POST /api/incident-report should reject missing messages',
+  );
+  assert(
+    typeof body.error === 'string',
+    'POST /api/incident-report should explain validation failure',
+  );
+}
+
+async function verifyIncidentReportHeuristicFallback() {
+  const { POST: generateIncidentReport } =
+    await import('../app/api/incident-report/route');
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () => {
+    throw new Error('network disabled in contract test');
+  }) as typeof fetch;
+
+  try {
+    const request = new NextRequest('http://localhost:3000/api/incident-report', {
+      body: JSON.stringify({
+        agentUID: '123456',
+        messages: [
+          {
+            uid: 99,
+            text: 'Confirmed checkout is down and error rate is 18 percent. Maybe the last deploy caused it. We will rollback. Can you verify payments?',
+            createdAt: Date.now(),
+          },
+        ],
+      }),
+      method: 'POST',
+    });
+    const response = await generateIncidentReport(request);
+    const body = await getJson(response);
+    const report = body.report as Record<string, unknown> | undefined;
+
+    assert(
+      response.status === 200,
+      'POST /api/incident-report should return 200 with heuristic fallback',
+    );
+    assert(report !== undefined, 'POST /api/incident-report should return a report');
+    assert(
+      report?.source === 'heuristic',
+      'POST /api/incident-report should mark heuristic source when the model is unavailable',
+    );
+    assert(
+      Array.isArray(report?.timeline) && (report.timeline as unknown[]).length === 1,
+      'POST /api/incident-report heuristic report should include the transcript timeline',
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 async function main() {
   await verifyGenerateAgoraTokenRoute();
   await verifyGenerateAgoraTokenReplacesZeroUid();
@@ -455,6 +520,8 @@ async function main() {
   await verifyInviteAgentSuccess();
   await verifyStopConversationValidation();
   await verifyStopConversationSuccess();
+  await verifyIncidentReportValidation();
+  await verifyIncidentReportHeuristicFallback();
 
   console.log('API contract checks passed');
 }

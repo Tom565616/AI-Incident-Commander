@@ -11,6 +11,7 @@
 ## Secret Handling Rules
 
 - Keep `NEXT_AGORA_APP_CERTIFICATE` server-side only.
+- Keep `SARVAM_API_KEY` server-side only; it is used by the agent invite route and must never enter a browser bundle.
 - Do not expose BYOK provider API keys to client bundles.
 - Store secrets in `.env.local` for dev and deployment secret store in Vercel.
 - `env.local.example` documents expected keys without real values.

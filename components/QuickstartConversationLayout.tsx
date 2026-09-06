@@ -8,6 +8,7 @@ type QuickstartConversationLayoutProps = {
   statusPanel: ReactNode;
   pipelineMetrics: ReactNode;
   transcriptPanel: ReactNode;
+  incidentPanel: ReactNode;
   visualizer: ReactNode;
   controls: ReactNode;
   onEndConversation: () => void;
@@ -17,6 +18,7 @@ export function QuickstartConversationLayout({
   statusPanel,
   pipelineMetrics,
   transcriptPanel,
+  incidentPanel,
   visualizer,
   controls,
   onEndConversation,
@@ -34,7 +36,7 @@ export function QuickstartConversationLayout({
           />
           <div className="flex min-w-0 flex-col justify-center gap-1">
             <span className="truncate text-lg font-semibold leading-none tracking-[-0.025em] text-foreground">
-              Agora Conversational AI
+              Incident Commander
             </span>
             {pipelineMetrics}
           </div>
@@ -55,12 +57,12 @@ export function QuickstartConversationLayout({
         </div>
       </header>
 
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-4 px-4 pb-4 pt-4 md:px-6 lg:flex-row lg:gap-0">
-        <aside className="order-2 h-64 min-h-0 w-full shrink-0 lg:order-1 lg:h-full lg:w-[26rem]">
+      <div className="flex min-h-0 w-full flex-1 flex-col gap-4 px-4 pb-4 pt-4 md:px-6 xl:flex-row xl:gap-4">
+        <aside className="order-2 h-64 min-h-0 w-full shrink-0 xl:order-1 xl:h-full xl:w-[22rem]">
           {transcriptPanel}
         </aside>
 
-        <main className="order-1 flex min-h-0 flex-1 flex-col lg:order-2 lg:border-l lg:border-border/80 lg:pl-6">
+        <main className="order-1 flex min-h-[22rem] flex-1 flex-col xl:order-2 xl:border-x xl:border-border/80 xl:px-6">
           <div className="flex min-h-0 flex-1 flex-col pb-2 pt-3 md:pb-6">
             <div className="flex min-h-0 flex-1 items-center justify-center">
               {visualizer}
@@ -68,6 +70,10 @@ export function QuickstartConversationLayout({
             <div className="shrink-0 pt-4">{controls}</div>
           </div>
         </main>
+
+        <aside className="order-3 h-80 min-h-0 w-full shrink-0 xl:h-full xl:w-[22rem]">
+          {incidentPanel}
+        </aside>
       </div>
     </div>
   );

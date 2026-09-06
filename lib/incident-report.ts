@@ -180,7 +180,7 @@ export function transcriptToPromptLines(
     .slice(-80)
     .map((message, index) => {
       const speaker =
-        String(message.uid) === agentUID ? 'Incident Commander' : 'Team';
+        String(message.uid) === agentUID ? 'Nora' : 'Team';
       const time = formatIncidentTime(message.createdAt);
       const text = message.text!.trim().slice(0, 800);
       return `${index + 1}. [${time}] ${speaker}: ${text}`;
@@ -314,7 +314,7 @@ export function parseModelJson(text: string): unknown {
   return JSON.parse(raw.slice(start, end + 1));
 }
 
-export const INCIDENT_REPORT_SYSTEM_PROMPT = `You are the post-call recorder for an Incident Commander. Organize what humans said. Never invent root cause, metrics, owners, or events that are not in the transcript.
+export const INCIDENT_REPORT_SYSTEM_PROMPT = `You are Nora's post-call recorder. Organize what humans said. Never invent root cause, metrics, owners, or events that are not in the transcript.
 
 Return JSON only with this shape:
 {

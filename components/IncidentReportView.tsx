@@ -32,7 +32,7 @@ function reportToMarkdown(report: IncidentReport) {
     '## Timeline',
     ...report.timeline.map(
       (event) =>
-        `- ${event.time} · ${event.speaker === 'commander' ? 'Incident Commander' : 'Team'}: ${event.text}`,
+        `- ${event.time} · ${event.speaker === 'commander' ? 'Nora' : 'Team'}: ${event.text}`,
     ),
     '',
     '## Record',
@@ -175,7 +175,7 @@ export function IncidentReportView({
                           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                             {event.time} ·{' '}
                             {event.speaker === 'commander'
-                              ? 'Incident Commander'
+                              ? 'Nora'
                               : 'Team'}
                           </p>
                           <p className="mt-1 text-sm leading-5 text-foreground">

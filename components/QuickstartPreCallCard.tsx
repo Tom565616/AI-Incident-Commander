@@ -35,10 +35,10 @@ export function QuickstartPreCallCard({
           />
           <div>
             <p className="text-sm font-semibold tracking-tight text-foreground">
-              Agora Conversational AI
+              Nora
             </p>
             <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Incident operations
+              Incident response agent
             </p>
           </div>
         </div>
@@ -55,8 +55,7 @@ export function QuickstartPreCallCard({
             Voice-first command room
           </div>
           <h1 className="max-w-xl text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-foreground sm:text-6xl lg:text-7xl">
-            Incident
-            <span className="block text-primary">Commander.</span>
+            Meet Nora.
           </h1>
           <p className="mt-7 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">
             Keep the team focused when production gets loud. Speak naturally,
@@ -89,7 +88,7 @@ export function QuickstartPreCallCard({
                 Start an incident room
               </h2>
               <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
-                Bring your team in. The commander listens for facts, decisions,
+                Bring your team in. Nora listens for facts, decisions,
                 actions, and risks as the conversation unfolds.
               </p>
             </div>
@@ -112,7 +111,7 @@ export function QuickstartPreCallCard({
           <Button
             onClick={onStartConversation}
             disabled={isLoading}
-            className="mt-6 h-12 w-full rounded-lg border border-primary bg-primary text-sm font-semibold text-primary-foreground shadow-[0_0_24px_rgba(0,196,230,0.16)] transition-transform hover:-translate-y-0.5 hover:border-primary hover:bg-primary/90 disabled:hover:translate-y-0"
+            className="mt-6 h-12 w-full rounded-lg border border-primary bg-primary text-sm font-semibold text-primary-foreground shadow-[0_0_24px_rgba(74,222,128,0.18)] transition-transform hover:-translate-y-0.5 hover:border-primary hover:bg-primary/90 disabled:hover:translate-y-0"
             aria-label={isLoading ? 'Starting incident room' : 'Start incident room'}
           >
             {isLoading ? (
@@ -133,7 +132,7 @@ export function QuickstartPreCallCard({
 
       <footer className="flex flex-col gap-2 border-t border-border/70 pt-5 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <span>Human-led response / AI-organized record</span>
-        <span className="text-primary/80">Agora × Sarvam AI</span>
+        <span className="text-primary/80">Nora by Agora</span>
       </footer>
     </div>
   );

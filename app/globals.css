@@ -143,6 +143,24 @@ body {
   background-color: hsl(var(--background));
 }
 
+.incident-home {
+  background-color: hsl(var(--background));
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.22) 1px, transparent 1px),
+    radial-gradient(circle at 78% 42%, hsl(var(--primary) / 0.1), transparent 32%),
+    linear-gradient(135deg, hsl(var(--background)), hsl(var(--surface)) 58%, hsl(var(--background)));
+  background-size: 44px 44px, 44px 44px, auto, auto;
+}
+
+.incident-home::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(90deg, hsl(var(--background) / 0.88), transparent 42%, hsl(var(--background) / 0.38));
+}
+
 /* --- Entry animations --- */
 
 @keyframes fade-up {

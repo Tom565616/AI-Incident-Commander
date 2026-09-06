@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -39,7 +40,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
+      <head>
+        <Script
+          id="nora-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html:
+              "const theme = localStorage.getItem('nora-theme') || 'light'; document.documentElement.classList.toggle('dark', theme === 'dark');",
+          }}
+        />
+      </head>
       <body className="h-full min-h-screen">{children}</body>
     </html>
   );

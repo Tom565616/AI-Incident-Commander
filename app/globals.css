@@ -79,11 +79,10 @@
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
+html.dark {
+  color-scheme: dark;
 
-    /* --- Agora dark token set --- */
+  /* --- Nora dark token set --- */
 
     --background:       220 14% 5%;
     --surface:          220 12% 9%;
@@ -133,8 +132,7 @@
     /* Agent visualizer accent ramp used by the current conversation UI. */
     --viz-stop-1: 142 72% 56%;
     --viz-stop-2: 142 42% 72%;
-    --viz-stop-3: 158 62% 58%;
-  }
+  --viz-stop-3: 158 62% 58%;
 }
 
 body {

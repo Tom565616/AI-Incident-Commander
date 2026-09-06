@@ -3,6 +3,7 @@
 import { useState, useRef, Suspense, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { Moon, Sun } from 'lucide-react';
 import type { RTMClient } from 'agora-rtm';
 import type {
   AgoraTokenData,
@@ -59,6 +60,7 @@ const AgoraProvider = dynamic(
 
 export default function LandingPage() {
   const [showConversation, setShowConversation] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   // Preload heavy modules on mount so they're already cached when the user
   // clicks "Try it Now" — eliminates the ~1.8s dynamic-import delay.
@@ -66,6 +68,20 @@ export default function LandingPage() {
     import('agora-rtc-react').catch(() => {});
     import('agora-rtm').catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem('nora-theme');
+    const shouldUseDark = savedTheme === 'dark';
+    setIsDark(shouldUseDark);
+    document.documentElement.classList.toggle('dark', shouldUseDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextIsDark = !isDark;
+    setIsDark(nextIsDark);
+    document.documentElement.classList.toggle('dark', nextIsDark);
+    window.localStorage.setItem('nora-theme', nextIsDark ? 'dark' : 'light');
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [agoraData, setAgoraData] = useState<AgoraTokenData | null>(null);
@@ -251,6 +267,15 @@ export default function LandingPage() {
 
   return (
     <div className="incident-home relative flex h-dvh min-h-screen flex-col overflow-hidden text-foreground">
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="fixed right-4 top-4 z-50 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/80 text-muted-foreground shadow-sm backdrop-blur transition-colors hover:border-primary hover:text-primary"
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </button>
       {/* Hero shell: either shows the pre-call CTA or swaps in the live conversation experience. */}
       <div
         className={`flex min-h-0 flex-1 flex-col ${

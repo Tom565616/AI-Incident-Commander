@@ -121,8 +121,6 @@ export async function POST(request: NextRequest) {
           apiKey: requireEnv('SARVAM_API_KEY'),
           url: 'https://api.sarvam.ai/v1/chat/completions',
           model: 'sarvam-105b-conversations',
-          greetingMessage: GREETING,
-          failureMessage: 'Please wait a moment.',
           maxHistory: 15,
           params: {
             max_tokens: 1024,
